@@ -73,48 +73,9 @@ public class IndexedRenderer implements Disposable{
         float u2 = region.u2;
         float v2 = region.v;
 
-        float[] vertices = tmpVerts;
-        float color = this.color;
-
-        int idx = 0;
-        vertices[idx++] = x;
-        vertices[idx++] = y;
-        vertices[idx++] = color;
-        vertices[idx++] = u;
-        vertices[idx++] = v;
-
-        vertices[idx++] = x;
-        vertices[idx++] = fy2;
-        vertices[idx++] = color;
-        vertices[idx++] = u;
-        vertices[idx++] = v2;
-
-        vertices[idx++] = fx2;
-        vertices[idx++] = fy2;
-        vertices[idx++] = color;
-        vertices[idx++] = u2;
-        vertices[idx++] = v2;
-
-        //tri2
-        vertices[idx++] = fx2;
-        vertices[idx++] = fy2;
-        vertices[idx++] = color;
-        vertices[idx++] = u2;
-        vertices[idx++] = v2;
-
-        vertices[idx++] = fx2;
-        vertices[idx++] = y;
-        vertices[idx++] = color;
-        vertices[idx++] = u2;
-        vertices[idx++] = v;
-
-        vertices[idx++] = x;
-        vertices[idx++] = y;
-        vertices[idx++] = color;
-        vertices[idx++] = u;
-        vertices[idx++] = v;
-
-        mesh.updateVertices(index * vsize * 6, vertices);
+        float[] uvs = {u, v, u2, v2};
+        float[] vertices = {x, y, x, fy2, fx2, fy2, fx2, y};
+        updateMeshVertices(index, uvs, vertices);
     }
 
     public void draw(int index, TextureRegion region, float x, float y, float w, float h, float rotation){
@@ -145,48 +106,53 @@ public class IndexedRenderer implements Disposable{
         float x4 = x1 + (x3 - x2);
         float y4 = y3 - (y2 - y1);
 
-        float[] vertices = tmpVerts;
+        float[] uvs = {u, v, u2, v2};
+        float[] vertices = {x1, y1, x2, y2, x3, y3, x4, y4};
+        updateMeshVertices(index, uvs, vertices);
+    }
+
+    private void updateMeshVertices(int index, float[] uv, float[] vertices) {
         float color = this.color;
 
         int idx = 0;
-        vertices[idx++] = x1;
-        vertices[idx++] = y1;
-        vertices[idx++] = color;
-        vertices[idx++] = u;
-        vertices[idx++] = v;
+        tmpVerts[idx++] = vertices[0];
+        tmpVerts[idx++] = vertices[1];
+        tmpVerts[idx++] = color;
+        tmpVerts[idx++] = uv[0];
+        tmpVerts[idx++] = uv[1];
 
-        vertices[idx++] = x2;
-        vertices[idx++] = y2;
-        vertices[idx++] = color;
-        vertices[idx++] = u;
-        vertices[idx++] = v2;
+        tmpVerts[idx++] = vertices[2];
+        tmpVerts[idx++] = vertices[3];
+        tmpVerts[idx++] = color;
+        tmpVerts[idx++] = uv[0];
+        tmpVerts[idx++] = uv[3];
 
-        vertices[idx++] = x3;
-        vertices[idx++] = y3;
-        vertices[idx++] = color;
-        vertices[idx++] = u2;
-        vertices[idx++] = v2;
+        tmpVerts[idx++] = vertices[4];
+        tmpVerts[idx++] = vertices[5];
+        tmpVerts[idx++] = color;
+        tmpVerts[idx++] = uv[2];
+        tmpVerts[idx++] = uv[3];
 
         //tri2
-        vertices[idx++] = x3;
-        vertices[idx++] = y3;
-        vertices[idx++] = color;
-        vertices[idx++] = u2;
-        vertices[idx++] = v2;
+        tmpVerts[idx++] = vertices[4];
+        tmpVerts[idx++] = vertices[5];
+        tmpVerts[idx++] = color;
+        tmpVerts[idx++] = uv[2];
+        tmpVerts[idx++] = uv[3];
 
-        vertices[idx++] = x4;
-        vertices[idx++] = y4;
-        vertices[idx++] = color;
-        vertices[idx++] = u2;
-        vertices[idx++] = v;
+        tmpVerts[idx++] = vertices[6];
+        tmpVerts[idx++] = vertices[7];
+        tmpVerts[idx++] = color;
+        tmpVerts[idx++] = uv[2];
+        tmpVerts[idx++] = uv[1];
 
-        vertices[idx++] = x1;
-        vertices[idx++] = y1;
-        vertices[idx++] = color;
-        vertices[idx++] = u;
-        vertices[idx++] = v;
+        tmpVerts[idx++] = vertices[0];
+        tmpVerts[idx++] = vertices[1];
+        tmpVerts[idx++] = color;
+        tmpVerts[idx++] = uv[0];
+        tmpVerts[idx  ] = uv[1];
 
-        mesh.updateVertices(index * vsize * 6, vertices);
+        mesh.updateVertices(index * vsize * 6, tmpVerts);
     }
 
     public Mat getTransformMatrix(){
